@@ -1,7 +1,11 @@
+@import 'normalize.css';
+@import url('../../public/fonts/font.css');
+
 * {
   box-sizing: border-box;
   padding: 0;
   margin: 0;
+  font-family: 'Noto Sans KR', sans-serif;
 }
 
 a {
