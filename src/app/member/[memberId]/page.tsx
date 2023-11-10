@@ -1,11 +1,9 @@
+import React from 'react';
+
 type Props = {
-    params: { memberId: string };
+  params: { memberId: string };
 };
 
-export default function memberDetail({ params }:Props) {
-    return (
-        <div>
-            {params.memberId}
-        </div>
-    )
+export default function memberDetail({ params }: Props) {
+  return <div>{params.memberId}</div>;
 }

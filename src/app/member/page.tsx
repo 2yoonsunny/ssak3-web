@@ -1,9 +1,5 @@
-// 'use client'
+import React from 'react';
 
 export default function Member() {
-    return (
-        <div>
-            Member
-        </div>
-    )
+  return <div>Member</div>;
 }

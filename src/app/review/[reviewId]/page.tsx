@@ -1,11 +1,9 @@
+import React from 'react';
+
 type Props = {
-    params: { reviewId: string };
+  params: { reviewId: string };
 };
 
-export default function reviewDetail({ params }:Props) {
-    return (
-        <div>
-            {params.reviewId}
-        </div>
-    )
+export default function reviewDetail({ params }: Props) {
+  return <div>{params.reviewId}</div>;
 }
