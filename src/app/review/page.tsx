@@ -1,5 +1,10 @@
 import React from 'react';
+import Sidebar from '@/components/Sidebar';
 
 export default function Review() {
-  return <div>Review</div>;
+  return (
+    <div>
+      <Sidebar />
+    </div>
+  );
 }

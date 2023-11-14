@@ -1,6 +1,6 @@
 import React from 'react';
 import type { Metadata } from 'next';
-import '../styles/globals.css';
+import '@/styles/globals.css';
 
 export const metadata: Metadata = {
   title: '싹쓰리 백오피스',
@@ -14,7 +14,7 @@ export default function RootLayout({
 }) {
   // const pathname = children?.props?.childProp?.segment
   return (
-    <html lang="ko">
+    <html lang='ko'>
       <body>{children}</body>
     </html>
   );

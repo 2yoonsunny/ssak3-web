@@ -1,0 +1,26 @@
+.sidebar {
+  width: 220px;
+  height: 100vh;
+  background: #4E5867;
+
+  .logo {
+    padding: 8px 0;
+    background: #1CC8FF;
+    text-align: center;
+  }
+
+  .menu {
+    li {
+      padding: 16px 20px;
+      color: #FFF;
+      font-size: 16px;
+      font-weight: 400;
+      opacity: 0.6;
+
+      &.active {
+        font-weight: 700;
+        opacity: 1;
+      }
+    }
+  }
+}

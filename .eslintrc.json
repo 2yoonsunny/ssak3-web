@@ -15,6 +15,7 @@
       }
     ],
     "import/prefer-default-export": ["off", { "target": "single" }],
-    "operator-linebreak": [0]
+    "operator-linebreak": [0],
+    "jsx-quotes": ["error", "prefer-single"]
   }
 }
