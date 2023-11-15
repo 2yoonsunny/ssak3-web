@@ -1,0 +1,13 @@
+.filter {
+  select {
+    width: 175px;
+    height: 48px;
+    padding: 0 20px;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: 400;
+    appearance: none;
+    background: #E9E9E9 url('/images/dropdown-arrow.png') no-repeat right / contain;
+  }
+}

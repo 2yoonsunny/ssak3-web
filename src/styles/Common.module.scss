@@ -1,0 +1,19 @@
+.section {
+  display: flex;
+
+  .content {
+    width: 100%;
+    padding: 64px 55px;
+
+    .header {
+      font-size: 32px;
+      font-weight: 700;
+    }
+
+    .condition {
+      display: flex;
+      justify-content: space-between;
+      margin: 32px 0 24px;
+    }
+  }
+}

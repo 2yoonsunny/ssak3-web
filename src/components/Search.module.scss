@@ -1,0 +1,27 @@
+.search {
+  display: flex;
+
+  select {
+    margin-right: 12px;
+  }
+
+  input {
+    padding: 12px 10px 12px 44px;
+    margin-right: 12px;
+    border: none;
+    border-radius: 4px;
+    background: #E9E9E9 url('/images/search.png') no-repeat 10px / 24px;
+    font-size: 16px;
+    font-weight: 400;
+  }
+
+  button {
+    padding: 13px 30px;
+    border: none;
+    border-radius: 4px;
+    background: #488EED;
+    font-size: 16px;
+    font-weight: 700;
+    color: #fff;
+  }
+}
