@@ -14,7 +14,7 @@ export default function Sidebar() {
     <div className={styles.sidebar}>
       <div className={styles.logo}>
         <Image
-          src='/images/logo.png'
+          src='/images/logo.svg'
           alt='ssak3 logo'
           priority
           width={80}

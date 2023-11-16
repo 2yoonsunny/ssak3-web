@@ -1,15 +1,25 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
+import { usePathname, useSearchParams, useRouter } from 'next/navigation';
 import styles from './Filter.module.scss';
+import { makeQueryString } from '@/utils/querystring';
 
 export default function Filter() {
   const data = [{ value: 'all', label: '전체' }];
-  const [value, setValue] = useState<string>('');
+  const params = 'status';
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const router = useRouter();
 
   const onChangeHandler = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setValue(e.target.value);
-    console.log(value);
+    const newParams = makeQueryString({
+      params,
+      value: e.target.value,
+      searchParams,
+      pathname,
+    });
+    router.push(newParams);
   };
 
   return (
