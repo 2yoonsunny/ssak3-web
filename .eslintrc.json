@@ -16,6 +16,7 @@
     ],
     "import/prefer-default-export": ["off", { "target": "single" }],
     "operator-linebreak": [0],
-    "jsx-quotes": ["error", "prefer-single"]
+    "jsx-quotes": ["error", "prefer-single"],
+    "react/require-default-props": "off"
   }
 }

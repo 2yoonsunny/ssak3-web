@@ -1,6 +1,6 @@
 export type MenuType = { index: number; name: string; path: string };
 
-export const menu: MenuType[] = [
+export const MENU: MenuType[] = [
   {
     index: 0,
     name: '수거 관리',

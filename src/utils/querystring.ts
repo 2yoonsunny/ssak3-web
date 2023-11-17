@@ -1,14 +1,19 @@
 import { ReadonlyURLSearchParams } from 'next/navigation';
 
 type MakeQueryStringParams = {
-  params: string;
+  param: string;
   value: string;
   searchParams: ReadonlyURLSearchParams;
   pathname: string;
 };
 
-export function makeQueryString(props: MakeQueryStringParams): string {
-  const newParams = new URLSearchParams(props.searchParams);
-  newParams.set(props.params, props.value);
-  return `${props.pathname}?${newParams.toString()}`;
+export function makeQueryString({
+  param,
+  value,
+  searchParams,
+  pathname,
+}: MakeQueryStringParams): string {
+  const newParams = new URLSearchParams(searchParams);
+  newParams.set(param, value);
+  return `${pathname}?${newParams.toString()}`;
 }

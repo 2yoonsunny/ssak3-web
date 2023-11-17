@@ -4,17 +4,22 @@ import React from 'react';
 import { usePathname, useSearchParams, useRouter } from 'next/navigation';
 import styles from './Filter.module.scss';
 import { makeQueryString } from '@/utils/querystring';
+import { OptionType } from '@/types/common';
 
-export default function Filter() {
-  const data = [{ value: 'all', label: '전체' }];
-  const params = 'status';
+type FilterProps = {
+  param: string;
+  data: OptionType[];
+  defaultIndex?: number;
+};
+
+export default function Filter({ param, data, defaultIndex = 0 }: FilterProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const router = useRouter();
 
   const onChangeHandler = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newParams = makeQueryString({
-      params,
+      param,
       value: e.target.value,
       searchParams,
       pathname,
@@ -24,10 +29,13 @@ export default function Filter() {
 
   return (
     <div className={styles.filter}>
-      <select defaultValue='all' onChange={onChangeHandler}>
+      <select
+        defaultValue={data[defaultIndex].value}
+        onChange={onChangeHandler}
+      >
         {data.map((d) => (
           <option key={d.value} value={d.value}>
-            {d.label}
+            {d.name}
           </option>
         ))}
       </select>

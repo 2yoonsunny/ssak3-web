@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import styles from './Sidebar.module.scss';
-import { menu, MenuType } from '@/constants/menu';
+import { MENU, MenuType } from '@/constants/menu';
 
 export default function Sidebar() {
   const pathname = usePathname();
@@ -22,7 +22,7 @@ export default function Sidebar() {
         />
       </div>
       <ul className={styles.menu}>
-        {menu.map((data: MenuType) => (
+        {MENU.map((data: MenuType) => (
           <li
             key={data.index}
             className={pathname === data.path ? styles.active : ''}

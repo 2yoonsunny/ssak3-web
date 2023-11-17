@@ -5,10 +5,14 @@ import { usePathname, useSearchParams, useRouter } from 'next/navigation';
 import styles from './Search.module.scss';
 import Filter from './Filter';
 import { makeQueryString } from '@/utils/querystring';
+import { OptionType } from '@/types/common';
 
-export default function Search() {
-  const showFilter = true;
-  const params = 'keyword';
+type SearchProps = {
+  filterData?: OptionType[];
+};
+
+export default function Search({ filterData }: SearchProps) {
+  const param = 'keyword';
   const [value, setValue] = useState<string>('');
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -19,7 +23,7 @@ export default function Search() {
   };
   const onClickHandler = () => {
     const newParams = makeQueryString({
-      params,
+      param,
       value,
       searchParams,
       pathname,
@@ -29,7 +33,7 @@ export default function Search() {
 
   return (
     <div className={styles.search}>
-      {showFilter && <Filter />}
+      {filterData && <Filter param='property' data={filterData} />}
       <input type='text' onChange={onChangeHandler} />
       <button type='button' onClick={onClickHandler}>
         검색
