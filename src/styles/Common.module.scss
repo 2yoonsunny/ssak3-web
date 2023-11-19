@@ -15,5 +15,72 @@
       justify-content: space-between;
       margin: 32px 0 24px;
     }
+
+    .dataTable{
+      width: 100%;
+
+      thead, tbody {
+        th, td {
+          padding: 12px 8px;
+
+          &:first-child {
+            padding-left: 12px;
+          }
+          &:last-child {
+            padding-right: 12px;
+          }
+        }
+      }
+
+      thead {
+        th {
+          font-size: 14px;
+          font-weight: 600;
+          background: rgba(0, 0, 0, 0.05);
+
+          &:first-child {
+            border-radius: 4px 0 0 4px;
+          }
+          &:last-child {
+            border-radius: 0 4px 4px 0;
+          }
+        }
+      }
+
+      tbody {
+        td {
+          font-size: 16px;
+          font-weight: 400;
+          border-bottom: 1px solid #0000001A;
+        }
+      }
+    }
+
+    .pageIndicator {
+      display: flex;
+      margin-top: 24px;
+      justify-content: center;
+
+      div {
+        width: 40px;
+        height: 40px;
+        background: transparent no-repeat center / contain;
+        opacity: 0.4;
+        cursor: pointer;
+
+        &.disabled {
+          opacity: 0.1;
+          cursor: not-allowed;
+        }
+      }
+
+      .prev {
+        background-image: url('/images/prev.svg');
+      }
+
+      .next {
+        background-image: url('/images/next.svg');
+      }
+    }
   }
 }
