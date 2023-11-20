@@ -10,9 +10,15 @@ type FilterProps = {
   param: string;
   data: OptionType[];
   defaultIndex?: number;
+  hasTotal?: boolean;
 };
 
-export default function Filter({ param, data, defaultIndex = 0 }: FilterProps) {
+export default function Filter({
+  param,
+  data,
+  defaultIndex = 0,
+  hasTotal = false,
+}: FilterProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -30,9 +36,14 @@ export default function Filter({ param, data, defaultIndex = 0 }: FilterProps) {
   return (
     <div className={styles.filter}>
       <select
-        defaultValue={data[defaultIndex].value}
+        defaultValue={hasTotal ? 'total' : data[defaultIndex].value}
         onChange={onChangeHandler}
       >
+        {hasTotal && (
+          <option key='total' value='total'>
+            전체
+          </option>
+        )}
         {data.map((d) => (
           <option key={d.value} value={d.value}>
             {d.name}

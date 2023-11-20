@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 import cx from 'classnames';
 import commonStyles from '@/styles/Common.module.scss';
 import Sidebar from '@/components/Sidebar';
@@ -20,19 +21,20 @@ export default function Product() {
       <div className={commonStyles.content}>
         <h1 className={commonStyles.header}>수거 관리 목록</h1>
         <div className={commonStyles.condition}>
-          <Filter param='status' data={PRODUCT_STATUS} />
+          <Filter param='status' data={PRODUCT_STATUS} hasTotal />
           <Search filterData={FILTER_DATA} />
         </div>
         <table className={commonStyles.dataTable}>
           <thead>
             <tr>
-              <th>번호</th>
+              <th>수거ID</th>
               <th>회원 이름</th>
               <th>회원 이메일</th>
               <th>개수</th>
               <th>상태</th>
               <th>신청일시</th>
               <th>수거일시</th>
+              <th>링크</th>
             </tr>
           </thead>
           <tbody>
@@ -44,24 +46,9 @@ export default function Product() {
               <td>정산완료</td>
               <td>2023.11.01 22:00:00</td>
               <td>2023.11.11 12:00:00</td>
-            </tr>
-            <tr>
-              <td>P1</td>
-              <td>석슬일</td>
-              <td>one@naver.com</td>
-              <td>8</td>
-              <td>정산완료</td>
-              <td>2023.11.01 22:00:00</td>
-              <td>2023.11.11 12:00:00</td>
-            </tr>
-            <tr>
-              <td>P1</td>
-              <td>석슬일</td>
-              <td>one@naver.com</td>
-              <td>8</td>
-              <td>정산완료</td>
-              <td>2023.11.01 22:00:00</td>
-              <td>2023.11.11 12:00:00</td>
+              <td>
+                <Link href='product/1'>상세보기</Link>
+              </td>
             </tr>
           </tbody>
         </table>

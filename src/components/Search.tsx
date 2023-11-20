@@ -34,7 +34,11 @@ export default function Search({ filterData }: SearchProps) {
   return (
     <div className={styles.search}>
       {filterData && <Filter param='property' data={filterData} />}
-      <input type='text' onChange={onChangeHandler} />
+      <input
+        type='text'
+        placeholder='검색어를 입력해주세요'
+        onChange={onChangeHandler}
+      />
       <button type='button' onClick={onClickHandler}>
         검색
       </button>
