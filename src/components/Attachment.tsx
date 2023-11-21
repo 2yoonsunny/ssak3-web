@@ -16,7 +16,7 @@ export default function Attachment({
   filename,
   showDelete = false,
 }: AttachmentProps) {
-  const [showViewer, setShowViewer] = useState(false);
+  const [showViewer, setShowViewer] = useState<boolean>(false);
 
   const onClickViewer = () => {
     setShowViewer(!showViewer);
@@ -39,7 +39,11 @@ export default function Attachment({
       )}
       {showViewer && (
         <>
-          <div className={styles.dim} onClick={onClickViewer} role='none' />
+          <div
+            className={commonStyles.dim}
+            onClick={onClickViewer}
+            role='none'
+          />
           <div className={styles.viewer}>
             <Image src={src} alt='attachment' priority fill />
             <div className={commonStyles.actionBtn}>

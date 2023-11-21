@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import cx from 'classnames';
 import commonStyles from '@/styles/Common.module.scss';
 import Sidebar from '@/components/Sidebar';
@@ -12,8 +13,9 @@ type ProductDetailProps = {
 };
 
 export default function ProductDetail({ params }: ProductDetailProps) {
-  const [showItem, setShowItem] = useState(true);
-  const [isDisabled, setIsDisabled] = useState(true);
+  const [showItem, setShowItem] = useState<boolean>(true);
+  const [isDisabled, setIsDisabled] = useState<boolean>(true);
+  const router = useRouter();
 
   const onClickShowItem = () => {
     setShowItem(!showItem);
@@ -21,6 +23,9 @@ export default function ProductDetail({ params }: ProductDetailProps) {
   const onClickIsDisabled = () => {
     setIsDisabled(!isDisabled);
     window.scrollTo({ top: 0 });
+  };
+  const onClickList = () => {
+    router.push('/product');
   };
 
   return (
@@ -41,6 +46,15 @@ export default function ProductDetail({ params }: ProductDetailProps) {
         )}
       >
         <h1 className={commonStyles.header}>수거 관리 상세</h1>
+        <div className={cx(commonStyles.actionBtn, commonStyles.flex)}>
+          <button
+            type='button'
+            className={commonStyles.right}
+            onClick={onClickIsDisabled}
+          >
+            {isDisabled ? '수정하기' : '저장하기'}
+          </button>
+        </div>
         <div className={cx(commonStyles.card, commonStyles.flex)}>
           <ul>
             <li>
@@ -273,9 +287,13 @@ export default function ProductDetail({ params }: ProductDetailProps) {
             )}
           </div>
         </div>
-        <div className={commonStyles.actionBtn}>
-          <button type='button' onClick={onClickIsDisabled}>
-            {isDisabled ? '수정하기' : '저장하기'}
+        <div className={cx(commonStyles.actionBtn, commonStyles.flex)}>
+          <button
+            type='button'
+            className={commonStyles.center}
+            onClick={onClickList}
+          >
+            목록 보기
           </button>
         </div>
       </div>
