@@ -1,0 +1,66 @@
+.attachment {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 16px;
+  padding: 4px;
+  border-radius: 4px;
+  border: 1px solid rgba(0, 0, 0, 0.10);
+  background: #FFF;
+  box-shadow: 0px 2px 8px 0px rgba(0, 0, 0, 0.15);
+
+  img {
+    border-radius: 4px;
+    object-fit: cover;
+  }
+
+  p {
+    line-height: 22px;
+    margin: 0 10px 0 16px;
+    color: #000000D9;
+    font-size: 15px;
+    font-weight: 400;
+  }
+
+  button {
+    width: 24px;
+    height: 24px;
+    background: transparent url('/images/ico_search.svg') no-repeat center / contain;
+    border: none;
+    cursor: pointer !important;
+
+    &.delete {
+      background-image: url('/images/ico_close.svg');
+      cursor: unset !important;
+    }
+  }
+
+  .dim {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #000;
+    opacity: 0.5;
+  }
+
+  .viewer {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 50%;
+    height: 50%;
+
+    div {
+      position: absolute;
+      bottom: -69px;
+      left: 50%;
+      transform: translateX(-50%);
+
+      button {
+        height: 46px;
+      }
+    }
+  }
+}

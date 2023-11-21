@@ -1,17 +1,17 @@
 'use client';
 
 import React, { useState } from 'react';
-import Image from 'next/image';
 import cx from 'classnames';
 import commonStyles from '@/styles/Common.module.scss';
 import Sidebar from '@/components/Sidebar';
+import Attachment from '@/components/Attachment';
 import { PRODUCT_STATUS, PRODUCT_ITEM_STATUS } from '@/constants/status';
 
-type Props = {
+type ProductDetailProps = {
   params: { productId: string };
 };
 
-export default function ProductDetail({ params }: Props) {
+export default function ProductDetail({ params }: ProductDetailProps) {
   const [showItem, setShowItem] = useState(true);
   const [isDisabled, setIsDisabled] = useState(true);
 
@@ -20,11 +20,19 @@ export default function ProductDetail({ params }: Props) {
   };
   const onClickIsDisabled = () => {
     setIsDisabled(!isDisabled);
+    window.scrollTo({ top: 0 });
   };
 
   return (
     <div className={commonStyles.section}>
       <Sidebar />
+      {isDisabled ? (
+        <div className={commonStyles.notice}>읽기 모드</div>
+      ) : (
+        <div className={cx(commonStyles.notice, commonStyles.edit)}>
+          편집 모드
+        </div>
+      )}
       <div
         className={cx(
           commonStyles.content,
@@ -59,16 +67,7 @@ export default function ProductDetail({ params }: Props) {
           <div className={commonStyles.divider} />
 
           <h2 className={commonStyles.title}>사진</h2>
-          <div className={commonStyles.attachment}>
-            <Image
-              src='/images/mockup.jpg'
-              alt='attachment'
-              priority
-              width={72}
-              height={72}
-            />
-            <p>filename.jpg</p>
-          </div>
+          <Attachment src='/images/mockup.jpg' filename='filename.jpg' />
           <div className={commonStyles.divider} />
 
           <h2 className={commonStyles.title}>주소</h2>
@@ -188,18 +187,11 @@ export default function ProductDetail({ params }: Props) {
                 >
                   Add image
                 </button>
-                <div
-                  className={cx(commonStyles.attachment, commonStyles.delete)}
-                >
-                  <Image
-                    src='/images/mockup.jpg'
-                    alt='attachment'
-                    priority
-                    width={72}
-                    height={72}
-                  />
-                  <p>filename.jpg</p>
-                </div>
+                <Attachment
+                  src='/images/mockup.jpg'
+                  filename='filename.jpg'
+                  showDelete
+                />
                 <div className={commonStyles.divider} />
 
                 <div className={commonStyles.entry}>

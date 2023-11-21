@@ -1,4 +1,22 @@
 .section {
+  .notice {
+    position: fixed;
+    top: 0;
+    left: 220px;
+    width: calc(100% - 220px);
+    line-height: 28px;
+    background: #00D1C3;
+    box-shadow: 0px 2px 8px 0px rgba(0, 0, 0, 0.15);
+    color: white;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 600;
+
+    &.edit {
+      background: #FFC700;
+    }
+  }
+
   .content {
     width: calc(100% - 220px);
     margin-left: 220px;
@@ -61,9 +79,10 @@
             a {
               padding: 2px 8px;
               border-radius: 20px;
-              background: #00D1C3;
+              background: #4E5867;
               font-size: 15px;
               font-weight: 400;
+              color: #fff;
             }
           }
         }
@@ -276,42 +295,6 @@
           width: 27px;
           height: 27px;
           background: transparent url('/images/ico_file.svg') no-repeat left / contain;
-        }
-      }
-
-      .attachment {
-        display: inline-flex;
-        align-items: center;
-        margin-top: 16px;
-        padding: 4px;
-        border-radius: 4px;
-        border: 1px solid rgba(0, 0, 0, 0.10);
-        background: #FFF;
-        box-shadow: 0px 2px 8px 0px rgba(0, 0, 0, 0.15);
-
-        &:after {
-          display: block;
-          content: '';
-          width: 24px;
-          height: 24px;
-          background: transparent url('/images/ico_search.svg') no-repeat center / contain;
-        }
-
-        &.delete:after {
-          background-image: url('/images/ico_close.svg');
-        }
-
-        img {
-          border-radius: 4px;
-          object-fit: cover;
-        }
-
-        p {
-          line-height: 22px;
-          margin: 0 10px 0 16px;
-          color: #000000D9;
-          font-size: 15px;
-          font-weight: 400;
         }
       }
 
