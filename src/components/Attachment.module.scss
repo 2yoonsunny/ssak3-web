@@ -26,11 +26,9 @@
     height: 24px;
     background: transparent url('/images/ico_search.svg') no-repeat center / contain;
     border: none;
-    cursor: pointer !important;
 
     &.delete {
       background-image: url('/images/ico_close.svg');
-      cursor: unset !important;
     }
   }
 

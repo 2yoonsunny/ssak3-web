@@ -100,11 +100,9 @@
         height: 40px;
         background: transparent no-repeat center / contain;
         opacity: 0.4;
-        cursor: pointer;
 
         &.disabled {
           opacity: 0.1;
-          cursor: not-allowed;
         }
       }
 
@@ -121,15 +119,6 @@
   .detail {
     background: #F5F5F5;
     min-height: 100vh;
-
-    .addBtn, .addImageBtn, .deleteBtn button {
-      cursor: pointer;
-    }
-    &.disabled {
-      input, label, select, button {
-        cursor: not-allowed;
-      }
-    }
 
     .card, .modal {
       margin-top: 24px;
@@ -163,10 +152,14 @@
             margin-left: 16px;
             color: #00000099;
           }
+
+          a {
+            text-decoration: underline;
+          }
         }
       }
 
-      input {
+      input, .address {
         width: 100%;
         // line-height: 20px;
         margin-top: 16px;
@@ -225,6 +218,10 @@
           margin-right: 6px;
           background: transparent url('/images/ico_plus.svg') no-repeat left / contain;
         }
+
+        &:disabled {
+          background: #d3d3d3;
+        }
       }
 
       .item {
@@ -244,7 +241,6 @@
           height: 48px;
           background: transparent url('/images/ico_dropdown.svg') no-repeat right / contain;
           border: none;
-          cursor: pointer;
 
           &.hide {
             transform: rotate(180deg);
@@ -360,7 +356,16 @@
           font-size: 16px;
           font-weight: 400;
           color: #000;
+
+          &:disabled {
+            background: #d3d3d3;
+            border: none;
+          }
         }
+      }
+
+      .address {
+        text-align: left;
       }
     }
 
@@ -377,7 +382,22 @@
         box-shadow: 0px 2px 12px 2px rgba(0, 0, 0, 0.15);
         font-size: 16px;
         font-weight: 700;
-        cursor: pointer;
+      }
+    }
+  }
+
+  input, label, button, select {
+    cursor: pointer;
+
+    &[type=text] {
+      cursor: text;
+    }
+
+    &:disabled {
+      cursor: default;
+
+      & + label {
+        cursor: default;
       }
     }
   }
@@ -429,4 +449,7 @@
 }
 .center {
   margin: 0 auto;
+}
+.none {
+  display: none;
 }

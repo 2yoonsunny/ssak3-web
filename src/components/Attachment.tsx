@@ -9,19 +9,21 @@ type AttachmentProps = {
   src: string;
   filename: string;
   showDelete?: boolean;
+  disabled?: boolean;
 };
 
 export default function Attachment({
   src,
   filename,
   showDelete = false,
+  disabled = false,
 }: AttachmentProps) {
   const [showViewer, setShowViewer] = useState<boolean>(false);
 
   const onClickViewer = () => {
     setShowViewer(!showViewer);
   };
-  const onClickDelete = () => {};
+  const onClickDeleteButton = () => {};
 
   return (
     <div className={styles.attachment}>
@@ -31,8 +33,9 @@ export default function Attachment({
         <button
           type='button'
           aria-label='delete'
+          disabled={disabled}
           className={styles.delete}
-          onClick={onClickDelete}
+          onClick={onClickDeleteButton}
         />
       ) : (
         <button type='button' aria-label='viewer' onClick={onClickViewer} />

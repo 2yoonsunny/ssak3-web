@@ -2,30 +2,55 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import cx from 'classnames';
+import dayjs from 'dayjs';
+import { useDaumPostcodePopup, Address } from 'react-daum-postcode';
 import commonStyles from '@/styles/Common.module.scss';
 import Sidebar from '@/components/Sidebar';
 import Attachment from '@/components/Attachment';
 import { PRODUCT_STATUS, PRODUCT_ITEM_STATUS } from '@/constants/status';
+import { addCommas } from '@/utils/number';
 
 type ProductDetailProps = {
   params: { productId: string };
 };
 
 export default function ProductDetail({ params }: ProductDetailProps) {
+  const [address, setAddress] = useState<string>('서울 강남구 테헤란로 231');
   const [showItem, setShowItem] = useState<boolean>(true);
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
   const router = useRouter();
+  const openDaumPostcodePopup = useDaumPostcodePopup();
 
-  const onClickShowItem = () => {
+  const onClickShowItemButton = () => {
     setShowItem(!showItem);
   };
-  const onClickIsDisabled = () => {
+  const onClickModeButton = () => {
     setIsDisabled(!isDisabled);
-    window.scrollTo({ top: 0 });
   };
-  const onClickList = () => {
+  const onClickListButton = () => {
     router.push('/product');
+  };
+  const onCompletePostcodePopup = (data: Address) => {
+    let fullAddress = data.address;
+    let extraAddress = '';
+
+    if (data.addressType === 'R') {
+      if (data.bname !== '') {
+        extraAddress += data.bname;
+      }
+      if (data.buildingName !== '') {
+        extraAddress +=
+          extraAddress !== '' ? `, ${data.buildingName}` : data.buildingName;
+      }
+      fullAddress += extraAddress !== '' ? ` (${extraAddress})` : '';
+    }
+
+    setAddress(fullAddress);
+  };
+  const onClickPostcodeButton = () => {
+    openDaumPostcodePopup({ onComplete: onCompletePostcodePopup });
   };
 
   return (
@@ -50,7 +75,7 @@ export default function ProductDetail({ params }: ProductDetailProps) {
           <button
             type='button'
             className={commonStyles.right}
-            onClick={onClickIsDisabled}
+            onClick={onClickModeButton}
           >
             {isDisabled ? '수정하기' : '저장하기'}
           </button>
@@ -67,7 +92,9 @@ export default function ProductDetail({ params }: ProductDetailProps) {
             </li>
             <li>
               <p>회원 이메일</p>
-              <span>one@naver.com</span>
+              <Link href='/member/1'>
+                <span>one@naver.com</span>
+              </Link>
             </li>
             <li>
               <p>신청일시</p>
@@ -85,11 +112,15 @@ export default function ProductDetail({ params }: ProductDetailProps) {
           <div className={commonStyles.divider} />
 
           <h2 className={commonStyles.title}>주소</h2>
-          <input
-            type='text'
-            value='서울 강남구 테헤란로 231'
+          <button
+            type='button'
+            className={commonStyles.address}
+            onClick={onClickPostcodeButton}
             disabled={isDisabled}
-          />
+          >
+            {address}
+          </button>
+          <input type='text' placeholder='상세주소' disabled={isDisabled} />
           <div className={commonStyles.divider} />
 
           <h2 className={commonStyles.title}>공동 현관 출입 방법</h2>
@@ -102,16 +133,19 @@ export default function ProductDetail({ params }: ProductDetailProps) {
 
           <h2 className={commonStyles.title}>수거일시</h2>
           <input
-            type='text'
-            value='2023.11.11 12:00:00'
+            type='datetime-local'
+            value='2023-11-11T12:00'
             disabled={isDisabled}
+            min={dayjs('2023.11.01 22:00:00', 'YYYY-MM-DD HH;mm:ss').format(
+              'YYYY-MM-DDTHH:mm',
+            )}
           />
         </div>
         <div className={commonStyles.card}>
           <h2 className={commonStyles.title}>상태</h2>
-          <select defaultValue={PRODUCT_STATUS[0].value}>
+          <select defaultValue={PRODUCT_STATUS[0].value} disabled={isDisabled}>
             {PRODUCT_STATUS.map((data) => (
-              <option key={data.value} value={data.value} disabled={isDisabled}>
+              <option key={data.value} value={data.value}>
                 {data.name}
               </option>
             ))}
@@ -133,7 +167,7 @@ export default function ProductDetail({ params }: ProductDetailProps) {
                 type='button'
                 aria-label='showItem'
                 className={!showItem ? commonStyles.hide : ''}
-                onClick={onClickShowItem}
+                onClick={onClickShowItemButton}
               />
             </div>
             {showItem && (
@@ -179,32 +213,49 @@ export default function ProductDetail({ params }: ProductDetailProps) {
                     </li>
                     <li>
                       <p>평균시세</p>
-                      <input type='text' value='32,000' disabled={isDisabled} />
+                      <input
+                        type='text'
+                        value={addCommas(32000)}
+                        disabled={isDisabled}
+                      />
                     </li>
                     <li>
                       <p>가격(일반판매)</p>
-                      <input type='text' value='28,000' disabled={isDisabled} />
+                      <input
+                        type='text'
+                        value={addCommas(28000)}
+                        disabled={isDisabled}
+                      />
                     </li>
                     <li>
                       <p>가격(바로판매)</p>
-                      <input type='text' value='21,000' disabled={isDisabled} />
+                      <input
+                        type='text'
+                        value={addCommas(21000)}
+                        disabled={isDisabled}
+                      />
                     </li>
                   </ul>
                 </div>
                 <div className={commonStyles.divider} />
 
                 <h2 className={commonStyles.title}>사진</h2>
-                <button
-                  type='button'
-                  className={commonStyles.addImageBtn}
+                <input
+                  type='file'
+                  id='add-image'
                   disabled={isDisabled}
-                >
+                  accept='image/*'
+                  multiple
+                  className={commonStyles.none}
+                />
+                <label htmlFor='add-image' className={commonStyles.addImageBtn}>
                   Add image
-                </button>
+                </label>
                 <Attachment
                   src='/images/mockup.jpg'
                   filename='filename.jpg'
                   showDelete
+                  disabled={isDisabled}
                 />
                 <div className={commonStyles.divider} />
 
@@ -260,20 +311,31 @@ export default function ProductDetail({ params }: ProductDetailProps) {
 
                 <h2 className={commonStyles.title}>판매기간</h2>
                 <div className={commonStyles.date}>
-                  <input type='text' value='2023.11.21' disabled={isDisabled} />
+                  <input
+                    type='date'
+                    value='2023-11-21'
+                    disabled={isDisabled}
+                    min={dayjs('2023-11-11T12:00', 'YYYY-MM-DDTHH;mm').format(
+                      'YYYY-MM-DD',
+                    )}
+                  />
                   <p>-</p>
-                  <input type='text' value='2023.11.30' disabled={isDisabled} />
+                  <input
+                    type='date'
+                    value='2023-11-30'
+                    disabled={isDisabled}
+                    min='2023-11-21'
+                  />
                 </div>
                 <div className={commonStyles.divider} />
 
                 <h2 className={commonStyles.title}>상태</h2>
-                <select defaultValue={PRODUCT_STATUS[0].value}>
+                <select
+                  defaultValue={PRODUCT_STATUS[0].value}
+                  disabled={isDisabled}
+                >
                   {PRODUCT_ITEM_STATUS.map((data) => (
-                    <option
-                      key={data.value}
-                      value={data.value}
-                      disabled={isDisabled}
-                    >
+                    <option key={data.value} value={data.value}>
                       {data.name}
                     </option>
                   ))}
@@ -291,7 +353,7 @@ export default function ProductDetail({ params }: ProductDetailProps) {
           <button
             type='button'
             className={commonStyles.center}
-            onClick={onClickList}
+            onClick={onClickListButton}
           >
             목록 보기
           </button>

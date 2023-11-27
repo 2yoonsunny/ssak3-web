@@ -6,6 +6,7 @@ import Link from 'next/link';
 import cx from 'classnames';
 import commonStyles from '@/styles/Common.module.scss';
 import Sidebar from '@/components/Sidebar';
+import { addCommas } from '@/utils/number';
 
 type MemberDetailProps = {
   params: { memberId: string };
@@ -17,19 +18,19 @@ export default function MemberDetail({ params }: MemberDetailProps) {
   const [showPointModal, setShowPointModal] = useState<boolean>(false);
   const router = useRouter();
 
-  const onClickShowProduct = () => {
+  const onClickShowProductButton = () => {
     setShowProduct(!showProduct);
   };
-  const onClickShowPoint = () => {
+  const onClickShowPointButton = () => {
     setShowPoint(!showPoint);
   };
-  const onClickShowPointModal = () => {
+  const onClickShowPointModalButton = () => {
     setShowPointModal(!showPointModal);
   };
-  const onClickSave = () => {
+  const onClickSaveButton = () => {
     setShowPointModal(false);
   };
-  const onClickList = () => {
+  const onClickListButton = () => {
     router.push('/member');
   };
 
@@ -81,7 +82,7 @@ export default function MemberDetail({ params }: MemberDetailProps) {
               type='button'
               aria-label='showProduct'
               className={!showProduct ? commonStyles.hide : ''}
-              onClick={onClickShowProduct}
+              onClick={onClickShowProductButton}
             />
           </div>
           {showProduct && (
@@ -118,7 +119,7 @@ export default function MemberDetail({ params }: MemberDetailProps) {
               type='button'
               aria-label='showPoint'
               className={!showPoint ? commonStyles.hide : ''}
-              onClick={onClickShowPoint}
+              onClick={onClickShowPointButton}
             />
           </div>
           {showPoint && (
@@ -127,7 +128,7 @@ export default function MemberDetail({ params }: MemberDetailProps) {
                 type='button'
                 className={commonStyles.addBtn}
                 style={{ margin: '15px 0 32px 0' }}
-                onClick={onClickShowPointModal}
+                onClick={onClickShowPointModalButton}
               >
                 적립금 추가/제거
               </button>
@@ -145,7 +146,7 @@ export default function MemberDetail({ params }: MemberDetailProps) {
                   <tr>
                     <td>P1</td>
                     <td>P1-1</td>
-                    <td>+21,000P</td>
+                    <td>{`+${addCommas(21000)}P`}</td>
                     <td>바로적립</td>
                     <td>2023.11.10 12:00:00</td>
                   </tr>
@@ -158,7 +159,7 @@ export default function MemberDetail({ params }: MemberDetailProps) {
           <button
             type='button'
             className={commonStyles.center}
-            onClick={onClickList}
+            onClick={onClickListButton}
           >
             목록 보기
           </button>
@@ -167,13 +168,13 @@ export default function MemberDetail({ params }: MemberDetailProps) {
           <>
             <div
               className={commonStyles.dim}
-              onClick={onClickShowPointModal}
+              onClick={onClickShowPointModalButton}
               role='none'
             />
             <div className={commonStyles.modal}>
               <h3>적립금 추가/제거</h3>
               <h2 className={commonStyles.title}>금액</h2>
-              <input type='text' value='1,000' />
+              <input type='text' value={addCommas(1000)} />
               <h2 className={commonStyles.title}>사유</h2>
               <input type='text' value='이벤트' />
               <div className={commonStyles.entry}>
@@ -194,7 +195,7 @@ export default function MemberDetail({ params }: MemberDetailProps) {
                 <label htmlFor='point-minus'>제거</label>
               </div>
               <div className={commonStyles.actionBtn}>
-                <button type='button' onClick={onClickSave}>
+                <button type='button' onClick={onClickSaveButton}>
                   저장하기
                 </button>
               </div>

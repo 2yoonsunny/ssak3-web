@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import styles from '@/styles/Login.module.scss';
-import Logo from '../../public/images/Logo';
+import Logo from '@/components/Logo';
 
 export default function Home() {
   return (
