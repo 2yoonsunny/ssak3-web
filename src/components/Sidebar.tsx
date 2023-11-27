@@ -31,6 +31,9 @@ export default function Sidebar() {
           </li>
         ))}
       </ul>
+      <Link href='/' className={styles.logout}>
+        로그아웃
+      </Link>
     </div>
   );
 }
