@@ -46,6 +46,10 @@
           &:last-child {
             padding-right: 12px;
           }
+
+          &.long {
+            max-width: 300px;
+          }
         }
       }
 
@@ -76,7 +80,13 @@
             border-bottom: 1px solid #0000001A;
             text-align: center;
 
-            a {
+            &.long {
+              white-space: nowrap;
+              text-overflow: ellipsis;
+              overflow: hidden;
+            }
+
+            a, button {
               padding: 2px 8px;
               border-radius: 20px;
               background: #4E5867;
@@ -116,10 +126,7 @@
     }
   }
 
-  .detail {
-    background: #F5F5F5;
-    min-height: 100vh;
-
+  .detail, .modalContainer {
     .card, .modal {
       margin-top: 24px;
       padding: 24px 20px;
@@ -386,6 +393,11 @@
     }
   }
 
+  .detail {
+    background: #F5F5F5;
+    min-height: 100vh;
+  }
+
   input, label, button, select {
     cursor: pointer;
 
@@ -422,6 +434,10 @@
   border-radius: 8px;
   background: #FFF;
 
+  h2 {
+    margin-top: 32px;
+  }
+
   h3 {
     line-height: 23px;
     margin-bottom: 32px;
@@ -431,6 +447,18 @@
 
   input {
     min-width: 860px;
+  }
+
+  textarea {
+    width: 100%;
+    margin-top: 16px;
+    padding: 14px 20px;
+    border: none;
+    border-radius: 4px;
+    background: rgba(0, 0, 0, 0.05);
+    font-size: 16px;
+    font-weight: 400;
+    resize: none;
   }
 
   .entry {
