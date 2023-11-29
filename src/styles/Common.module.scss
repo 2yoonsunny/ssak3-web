@@ -126,7 +126,10 @@
     }
   }
 
-  .detail, .modalContainer {
+  .detail {
+    background: #F5F5F5;
+    min-height: 100vh;
+
     .card, .modal {
       margin-top: 24px;
       padding: 24px 20px;
@@ -189,6 +192,18 @@
         font-size: 16px;
         font-weight: 400;
         appearance: none;
+      }
+
+      textarea {
+        width: 100%;
+        margin-top: 16px;
+        padding: 14px 20px;
+        border: none;
+        border-radius: 4px;
+        background: rgba(0, 0, 0, 0.05);
+        font-size: 16px;
+        font-weight: 400;
+        resize: none;
       }
 
       .title {
@@ -273,11 +288,6 @@
           color: #666;
           font-size: 18px;
           font-weight: 700;
-        }
-
-        textarea {
-          width: 100%;
-          resize: none;
         }
       }
 
@@ -393,11 +403,6 @@
     }
   }
 
-  .detail {
-    background: #F5F5F5;
-    min-height: 100vh;
-  }
-
   input, label, button, select {
     cursor: pointer;
 
@@ -449,20 +454,18 @@
     min-width: 860px;
   }
 
-  textarea {
-    width: 100%;
-    margin-top: 16px;
-    padding: 14px 20px;
-    border: none;
-    border-radius: 4px;
-    background: rgba(0, 0, 0, 0.05);
-    font-size: 16px;
-    font-weight: 400;
-    resize: none;
-  }
-
   .entry {
     margin-top: 32px;
+  }
+
+  .closeBtn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 36px;
+    height: 36px;
+    background: transparent url('/images/ico_close.svg') no-repeat center / contain;
+    border: none;
   }
 }
 

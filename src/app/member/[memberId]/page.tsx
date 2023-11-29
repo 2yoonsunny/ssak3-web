@@ -173,6 +173,12 @@ export default function MemberDetail({ params }: MemberDetailProps) {
             />
             <div className={commonStyles.modal}>
               <h3>적립금 추가/제거</h3>
+              <button
+                type='button'
+                aria-label='close'
+                className={commonStyles.closeBtn}
+                onClick={onClickShowPointModalButton}
+              />
               <h2 className={commonStyles.title}>금액</h2>
               <input type='text' value={addCommas(1000)} />
               <h2 className={commonStyles.title}>사유</h2>
