@@ -1,10 +1,12 @@
 import React from 'react';
 import Link from 'next/link';
 import cx from 'classnames';
+import dayjs from 'dayjs';
 import commonStyles from '@/styles/Common.module.scss';
 import Sidebar from '@/components/Sidebar';
 import Search from '@/components/Search';
 import { OptionType } from '@/types/common';
+import { MemberType } from '@/types/member';
 
 const FILTER_DATA: OptionType[] = [
   { index: 0, name: '회원ID', value: 'memberId' },
@@ -13,7 +15,25 @@ const FILTER_DATA: OptionType[] = [
   { index: 3, name: '연락처', value: 'phoneNumber' },
 ];
 
-export default function Member() {
+const fetchData = async (querystring: string): Promise<MemberType[]> => {
+  const response = await fetch(
+    `${process.env.API_URL}/user/list?${querystring}`,
+    {
+      cache: 'no-cache',
+    },
+  );
+  const { result } = await response.json();
+  return result || [];
+};
+
+export default async function Member({
+  searchParams,
+}: {
+  searchParams?: URLSearchParams;
+}) {
+  const querystring = new URLSearchParams(searchParams).toString();
+  const memberData = await fetchData(querystring);
+
   return (
     <div className={commonStyles.section}>
       <Sidebar />
@@ -35,21 +55,35 @@ export default function Member() {
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>M1</td>
-              <td>석슬일</td>
-              <td>one@naver.com</td>
-              <td>010-1234-5678</td>
-              <td>2023.11.01 22:03:00</td>
-              <td>
-                <Link href='member/1'>상세보기</Link>
-              </td>
-            </tr>
+            {memberData.map((data: MemberType) => (
+              <tr key={data.memberId}>
+                <td>{data.memberId}</td>
+                <td>{data.username}</td>
+                <td>{data.email}</td>
+                <td>{data.phoneNumber}</td>
+                <td>
+                  {dayjs(data.createdAt, 'YYYY-MM-DDTHH:mm:ss').format(
+                    'YYYY-MM-DD HH:mm:ss',
+                  )}
+                </td>
+                <td>
+                  <Link href={`member/${data.memberId}`}>상세보기</Link>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
         <div className={commonStyles.pageIndicator}>
-          <div className={cx(commonStyles.prev, commonStyles.disabled)} />
-          <div className={commonStyles.next} />
+          <button
+            type='button'
+            aria-label='prevList'
+            className={cx(commonStyles.prev, commonStyles.disabled)}
+          />
+          <button
+            type='button'
+            aria-label='nextList'
+            className={commonStyles.next}
+          />
         </div>
       </div>
     </div>
