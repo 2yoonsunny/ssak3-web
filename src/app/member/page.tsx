@@ -1,12 +1,17 @@
 import React from 'react';
 import Link from 'next/link';
-import cx from 'classnames';
 import dayjs from 'dayjs';
 import commonStyles from '@/styles/Common.module.scss';
 import Sidebar from '@/components/Sidebar';
 import Search from '@/components/Search';
-import { OptionType } from '@/types/common';
+import { OptionType, PageInfoType } from '@/types/common';
 import { MemberType } from '@/types/member';
+import Pagination from '@/components/Pagination';
+
+type MemberResponseType = {
+  pageInfo: PageInfoType;
+  result: MemberType[];
+};
 
 const FILTER_DATA: OptionType[] = [
   { index: 0, name: '회원ID', value: 'memberId' },
@@ -15,15 +20,15 @@ const FILTER_DATA: OptionType[] = [
   { index: 3, name: '연락처', value: 'phoneNumber' },
 ];
 
-const fetchData = async (querystring: string): Promise<MemberType[]> => {
+const fetchData = async (querystring: string): Promise<MemberResponseType> => {
   const response = await fetch(
     `${process.env.API_URL}/user/list?${querystring}`,
     {
       cache: 'no-cache',
     },
   );
-  const { result } = await response.json();
-  return result || [];
+  const data = await response.json();
+  return data;
 };
 
 export default async function Member({
@@ -32,7 +37,7 @@ export default async function Member({
   searchParams?: URLSearchParams;
 }) {
   const querystring = new URLSearchParams(searchParams).toString();
-  const memberData = await fetchData(querystring);
+  const { result, pageInfo } = await fetchData(querystring);
 
   return (
     <div className={commonStyles.section}>
@@ -55,7 +60,7 @@ export default async function Member({
             </tr>
           </thead>
           <tbody>
-            {memberData.map((data: MemberType) => (
+            {result.map((data: MemberType) => (
               <tr key={data.memberId}>
                 <td>{data.memberId}</td>
                 <td>{data.username}</td>
@@ -73,18 +78,7 @@ export default async function Member({
             ))}
           </tbody>
         </table>
-        <div className={commonStyles.pageIndicator}>
-          <button
-            type='button'
-            aria-label='prevList'
-            className={cx(commonStyles.prev, commonStyles.disabled)}
-          />
-          <button
-            type='button'
-            aria-label='nextList'
-            className={commonStyles.next}
-          />
-        </div>
+        <Pagination pageInfo={pageInfo} />
       </div>
     </div>
   );

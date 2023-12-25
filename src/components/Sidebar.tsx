@@ -27,7 +27,9 @@ export default function Sidebar() {
             key={data.index}
             className={pathname === data.path ? styles.active : ''}
           >
-            <Link href={data.path}>{data.name}</Link>
+            <Link href={{ pathname: data.path, query: { page: 1, size: 10 } }}>
+              {data.name}
+            </Link>
           </li>
         ))}
       </ul>

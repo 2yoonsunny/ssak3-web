@@ -3,3 +3,10 @@ export type OptionType = {
   name: string;
   value: string;
 };
+
+export type PageInfoType = {
+  total: number;
+  lastPage: number;
+  hasPrev: boolean;
+  hasNext: boolean;
+};
