@@ -14,7 +14,9 @@ export default function Home() {
           <p>비밀번호</p>
           <input type='password' value='ssakssakssak' disabled />
         </div>
-        <Link href='/product'>로그인</Link>
+        <Link href={{ pathname: '/product', query: { page: 1, size: 10 } }}>
+          로그인
+        </Link>
       </div>
     </div>
   );

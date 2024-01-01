@@ -1,11 +1,11 @@
 import React from 'react';
 import Link from 'next/link';
-import dayjs from 'dayjs';
 import commonStyles from '@/styles/Common.module.scss';
 import Sidebar from '@/components/Sidebar';
 import Search from '@/components/Search';
 import { OptionType, PageInfoType } from '@/types/common';
 import { MemberType } from '@/types/member';
+import { convertDate } from '@/utils/date';
 import Pagination from '@/components/Pagination';
 
 type MemberResponseType = {
@@ -21,21 +21,14 @@ const FILTER_DATA: OptionType[] = [
 ];
 
 const fetchData = async (querystring: string): Promise<MemberResponseType> => {
-  const response = await fetch(
-    `${process.env.API_URL}/user/list?${querystring}`,
-    {
-      cache: 'no-cache',
-    },
-  );
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/user/list?${querystring}`, {
+    cache: 'no-cache',
+  });
   const data = await response.json();
   return data;
 };
 
-export default async function Member({
-  searchParams,
-}: {
-  searchParams?: URLSearchParams;
-}) {
+export default async function Member({ searchParams }: { searchParams?: URLSearchParams }) {
   const querystring = new URLSearchParams(searchParams).toString();
   const { result, pageInfo } = await fetchData(querystring);
 
@@ -66,11 +59,7 @@ export default async function Member({
                 <td>{data.username}</td>
                 <td>{data.email}</td>
                 <td>{data.phoneNumber}</td>
-                <td>
-                  {dayjs(data.createdAt, 'YYYY-MM-DDTHH:mm:ss').format(
-                    'YYYY-MM-DD HH:mm:ss',
-                  )}
-                </td>
+                <td>{convertDate(data.createdAt)}</td>
                 <td>
                   <Link href={`member/${data.memberId}`}>상세보기</Link>
                 </td>

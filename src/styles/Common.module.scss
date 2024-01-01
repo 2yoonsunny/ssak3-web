@@ -390,6 +390,18 @@
     .actionBtn {
       margin-top: 32px;
 
+      p {
+        min-height: 52px;
+        line-height: 20px;
+        margin-top: 16px;
+        padding: 16px 20px;
+        border-radius: 4px;
+        background: rgba(249, 107, 108, 0.10);
+        font-size: 14px;
+        font-weight: 400;
+        color: #F96B6C;
+      }
+
       button {
         width: 200px;
         line-height: 22px;
@@ -409,6 +421,10 @@
 
     &[type=text] {
       cursor: text;
+    }
+    &[type=number]::-webkit-outer-spin-button, &[type=number]::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
     }
 
     &:disabled {
