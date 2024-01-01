@@ -18,7 +18,7 @@ type ReviewDetailProps = {
 };
 
 export default function ReviewDetail({ params }: ReviewDetailProps) {
-  const [inputStatus, setInputStatus] = useState<string>('STEP_0');
+  const [inputStatus, setInputStatus] = useState<string>('0');
   const [inputReason, setInputReason] = useState<string>('');
   const [inputErrorMessage, setInputErrorMessage] = useState<string>('');
   const [showStatusModal, setShowStatusModal] = useState(false);
@@ -42,7 +42,7 @@ export default function ReviewDetail({ params }: ReviewDetailProps) {
   };
   const onClickShowStatusModalButton = () => {
     if (showStatusModal) {
-      setInputStatus('STEP_0');
+      setInputStatus('0');
       setInputReason('');
       setInputErrorMessage('');
     }
@@ -54,7 +54,7 @@ export default function ReviewDetail({ params }: ReviewDetailProps) {
     } else {
       const reqParam = {
         reviewId: Number(params.reviewId),
-        status: Number(REVIEW_STATUS.find((data) => data.value === inputStatus)?.index),
+        status: Number(inputStatus),
         reason: inputReason,
       };
       updateReviewMutate.mutate(reqParam, {
@@ -62,7 +62,7 @@ export default function ReviewDetail({ params }: ReviewDetailProps) {
           queryClient.invalidateQueries({
             queryKey: queryKeys.reviewDetail(params.reviewId),
           });
-          setInputStatus('STEP_0');
+          setInputStatus('0');
           setInputReason('');
           setInputErrorMessage('');
           setShowStatusModal(false);
@@ -72,6 +72,7 @@ export default function ReviewDetail({ params }: ReviewDetailProps) {
   };
   const onClickListButton = () => {
     router.push('/review');
+    router.refresh();
   };
 
   return (
@@ -140,7 +141,7 @@ export default function ReviewDetail({ params }: ReviewDetailProps) {
             <tbody>
               {reviewDetailQuery.data?.history?.map((data) => (
                 <tr key={data.id}>
-                  <td>게시</td>
+                  <td>{REVIEW_STATUS.find((d) => d.value === data.status)?.name}</td>
                   <td>{data.historyReason}</td>
                   <td>{convertDate(data.createdAt)}</td>
                 </tr>

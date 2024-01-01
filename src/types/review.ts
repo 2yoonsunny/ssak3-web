@@ -5,13 +5,14 @@ export type ReviewType = {
   title: string;
   content: string;
   createdAt: string;
-  status: number;
+  status: string;
   history?: ReviewHistoryType[];
 };
 
 export type ReviewHistoryType = {
   id: number;
   reviewId: number;
+  status: string;
   historyReason: string;
   createdAt: string;
 };

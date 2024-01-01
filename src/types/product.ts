@@ -1,7 +1,7 @@
 export type ProductType = {
   productId: number;
   memberId: number;
-  status: number;
+  status: string;
   count: number;
   requestTime: string;
   pickupTime: string;

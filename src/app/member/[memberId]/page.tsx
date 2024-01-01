@@ -167,7 +167,7 @@ export default function MemberDetail({ params }: MemberDetailProps) {
                   <tr key={data.productId}>
                     <td>P{data.productId}</td>
                     <td>{data.count}</td>
-                    <td>{PRODUCT_STATUS.find((d) => d.value === `STEP_${data.status}`)?.name}</td>
+                    <td>{PRODUCT_STATUS.find((d) => d.value === data.status)?.name}</td>
                     <td>{convertDate(data.requestTime)}</td>
                     <td>{convertDate(data.pickupTime)}</td>
                     <td>

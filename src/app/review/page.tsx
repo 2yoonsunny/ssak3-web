@@ -66,7 +66,7 @@ export default async function Review({ searchParams }: { searchParams?: URLSearc
                 <td>P{data.productId}</td>
                 <td>{data.title}</td>
                 <td className={commonStyles.long}>{data.content}</td>
-                <td>{REVIEW_STATUS.find((d) => d.value === `STEP_${data.status}`)?.name}</td>
+                <td>{REVIEW_STATUS.find((d) => d.value === data.status)?.name}</td>
                 <td>{convertDate(data.createdAt)}</td>
                 <td>
                   <Link href={`review/${data.reviewId}`}>상세보기</Link>
