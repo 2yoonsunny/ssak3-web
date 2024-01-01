@@ -7,12 +7,12 @@ import cx from 'classnames';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { queryKeys } from '@/apis/queryKeys';
 import { fetchMemberDetail, addPoint } from '@/apis/member';
+import { AddPointRequestParams } from '@/types/common';
 import commonStyles from '@/styles/Common.module.scss';
 import Sidebar from '@/components/Sidebar';
 import { PRODUCT_STATUS } from '@/constants/status';
 import { addCommas } from '@/utils/number';
 import { convertDate } from '@/utils/date';
-import { AddPointRequestParams } from '@/types/common';
 
 type MemberDetailProps = {
   params: { memberId: string };

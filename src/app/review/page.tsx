@@ -1,12 +1,19 @@
 import React from 'react';
 import Link from 'next/link';
-import cx from 'classnames';
 import commonStyles from '@/styles/Common.module.scss';
 import Sidebar from '@/components/Sidebar';
 import Filter from '@/components/Filter';
 import Search from '@/components/Search';
 import { REVIEW_STATUS } from '@/constants/status';
-import { OptionType } from '@/types/common';
+import { OptionType, PageInfoType } from '@/types/common';
+import { ReviewType } from '@/types/review';
+import { convertDate } from '@/utils/date';
+import Pagination from '@/components/Pagination';
+
+type ReviewResponseType = {
+  pageInfo: PageInfoType;
+  result: ReviewType[];
+};
 
 const FILTER_DATA: OptionType[] = [
   { index: 0, name: '리뷰ID', value: 'reviewId' },
@@ -14,7 +21,21 @@ const FILTER_DATA: OptionType[] = [
   { index: 2, name: '수거ID', value: 'productId' },
 ];
 
-export default function Review() {
+const fetchData = async (querystring: string): Promise<ReviewResponseType> => {
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/review/list?${querystring}`,
+    {
+      cache: 'no-cache',
+    },
+  );
+  const data = await response.json();
+  return data;
+};
+
+export default async function Review({ searchParams }: { searchParams?: URLSearchParams }) {
+  const querystring = new URLSearchParams(searchParams).toString();
+  const { result, pageInfo } = await fetchData(querystring);
+
   return (
     <div className={commonStyles.section}>
       <Sidebar />
@@ -38,24 +59,23 @@ export default function Review() {
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>R1</td>
-              <td>M1</td>
-              <td>P1</td>
-              <td>제목</td>
-              <td className={commonStyles.long}>내용</td>
-              <td>게시</td>
-              <td>2023.11.01 22:03:00</td>
-              <td>
-                <Link href='review/1'>상세보기</Link>
-              </td>
-            </tr>
+            {result.map((data: ReviewType) => (
+              <tr key={data.reviewId}>
+                <td>{data.reviewId}</td>
+                <td>M{data.memberId}</td>
+                <td>P{data.productId}</td>
+                <td>{data.title}</td>
+                <td className={commonStyles.long}>{data.content}</td>
+                <td>{REVIEW_STATUS.find((d) => d.value === `STEP_${data.status}`)?.name}</td>
+                <td>{convertDate(data.createdAt)}</td>
+                <td>
+                  <Link href={`review/${data.reviewId}`}>상세보기</Link>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
-        <div className={commonStyles.pageIndicator}>
-          <div className={cx(commonStyles.prev, commonStyles.disabled)} />
-          <div className={commonStyles.next} />
-        </div>
+        <Pagination pageInfo={pageInfo} />
       </div>
     </div>
   );

@@ -1,26 +1,74 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { ChangeEvent, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import cx from 'classnames';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { queryKeys } from '@/apis/queryKeys';
+import { fetchReviewDetail, updateReview } from '@/apis/review';
+import { UpdateReviewRequestParams } from '@/types/review';
 import commonStyles from '@/styles/Common.module.scss';
 import Sidebar from '@/components/Sidebar';
 import { REVIEW_STATUS } from '@/constants/status';
+import { convertDate } from '@/utils/date';
 
 type ReviewDetailProps = {
   params: { reviewId: string };
 };
 
 export default function ReviewDetail({ params }: ReviewDetailProps) {
+  const [inputStatus, setInputStatus] = useState<string>('STEP_0');
+  const [inputReason, setInputReason] = useState<string>('');
+  const [inputErrorMessage, setInputErrorMessage] = useState<string>('');
   const [showStatusModal, setShowStatusModal] = useState(false);
   const router = useRouter();
 
+  const queryClient = useQueryClient();
+  const reviewDetailQuery = useQuery({
+    queryKey: queryKeys.reviewDetail(params.reviewId),
+    queryFn: () => fetchReviewDetail(params.reviewId),
+    enabled: params.reviewId !== null,
+  });
+  const updateReviewMutate = useMutation({
+    mutationFn: (reqParams: UpdateReviewRequestParams) => updateReview(reqParams),
+  });
+
+  const onChangeInputStatus = (e: ChangeEvent<HTMLSelectElement>) => {
+    setInputStatus(e.target.value);
+  };
+  const onChangeInputReason = (e: ChangeEvent<HTMLInputElement>) => {
+    setInputReason(e.target.value);
+  };
   const onClickShowStatusModalButton = () => {
+    if (showStatusModal) {
+      setInputStatus('STEP_0');
+      setInputReason('');
+      setInputErrorMessage('');
+    }
     setShowStatusModal(!showStatusModal);
   };
   const onClickSaveButton = () => {
-    setShowStatusModal(false);
+    if (inputReason === '') {
+      setInputErrorMessage('사유를 입력해주세요');
+    } else {
+      const reqParam = {
+        reviewId: Number(params.reviewId),
+        status: Number(REVIEW_STATUS.find((data) => data.value === inputStatus)?.index),
+        reason: inputReason,
+      };
+      updateReviewMutate.mutate(reqParam, {
+        onSuccess: () => {
+          queryClient.invalidateQueries({
+            queryKey: queryKeys.reviewDetail(params.reviewId),
+          });
+          setInputStatus('STEP_0');
+          setInputReason('');
+          setInputErrorMessage('');
+          setShowStatusModal(false);
+        },
+      });
+    }
   };
   const onClickListButton = () => {
     router.push('/review');
@@ -35,31 +83,39 @@ export default function ReviewDetail({ params }: ReviewDetailProps) {
           <ul style={{ width: '100%' }}>
             <li>
               <p>리뷰ID</p>
-              <span>{params.reviewId}</span>
+              <span>{reviewDetailQuery.data?.reviewId}</span>
             </li>
             <li>
               <p>회원ID</p>
               <span>
-                <Link href='/member/1'>M1</Link>
+                {!reviewDetailQuery.isLoading && (
+                  <Link href={`/member/${reviewDetailQuery.data?.memberId}`}>
+                    M{reviewDetailQuery.data?.memberId}
+                  </Link>
+                )}
               </span>
             </li>
             <li>
               <p>수거ID</p>
               <span>
-                <Link href='/product/1'>P1</Link>
+                {!reviewDetailQuery.isLoading && (
+                  <Link href={`/product/${reviewDetailQuery.data?.productId}`}>
+                    P{reviewDetailQuery.data?.productId}
+                  </Link>
+                )}
               </span>
             </li>
             <li>
               <p>제목</p>
-              <span>제목</span>
+              <span>{reviewDetailQuery.data?.title}</span>
             </li>
             <li>
               <p>내용</p>
-              <span>내용</span>
+              <span>{reviewDetailQuery.data?.content}</span>
             </li>
             <li>
               <p>작성일시</p>
-              <span>2023.11.01 22:03:00</span>
+              <span>{convertDate(reviewDetailQuery.data?.createdAt)}</span>
             </li>
           </ul>
         </div>
@@ -82,30 +138,24 @@ export default function ReviewDetail({ params }: ReviewDetailProps) {
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>게시</td>
-                <td>-</td>
-                <td>2023.11.01 22:03:00</td>
-              </tr>
+              {reviewDetailQuery.data?.history?.map((data) => (
+                <tr key={data.id}>
+                  <td>게시</td>
+                  <td>{data.historyReason}</td>
+                  <td>{convertDate(data.createdAt)}</td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
         <div className={cx(commonStyles.actionBtn, commonStyles.flex)}>
-          <button
-            type='button'
-            className={commonStyles.center}
-            onClick={onClickListButton}
-          >
+          <button type='button' className={commonStyles.center} onClick={onClickListButton}>
             목록 보기
           </button>
         </div>
         {showStatusModal && (
           <>
-            <div
-              className={commonStyles.dim}
-              onClick={onClickShowStatusModalButton}
-              role='none'
-            />
+            <div className={commonStyles.dim} onClick={onClickShowStatusModalButton} role='none' />
             <div className={commonStyles.modal}>
               <h3>상태 변경</h3>
               <button
@@ -115,7 +165,7 @@ export default function ReviewDetail({ params }: ReviewDetailProps) {
                 onClick={onClickShowStatusModalButton}
               />
               <h2 className={commonStyles.title}>상태</h2>
-              <select defaultValue={REVIEW_STATUS[0].value}>
+              <select defaultValue={REVIEW_STATUS[0].value} onChange={onChangeInputStatus}>
                 {REVIEW_STATUS.map((data) => (
                   <option key={data.value} value={data.value}>
                     {data.name}
@@ -123,11 +173,17 @@ export default function ReviewDetail({ params }: ReviewDetailProps) {
                 ))}
               </select>
               <h2 className={commonStyles.title}>사유</h2>
-              <input type='text' />
+              <input
+                type='text'
+                value={inputReason}
+                placeholder='사유를 입력해주세요'
+                onChange={onChangeInputReason}
+              />
               <div className={commonStyles.actionBtn}>
                 <button type='button' onClick={onClickSaveButton}>
                   저장하기
                 </button>
+                {inputErrorMessage && <p>{inputErrorMessage}</p>}
               </div>
             </div>
           </>
