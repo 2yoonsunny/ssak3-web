@@ -24,5 +24,9 @@
     font-weight: 700;
     color: #fff;
     cursor: pointer;
+
+    &:disabled {
+      background: #d3d3d3;
+    }
   }
 }

@@ -21,7 +21,7 @@ export default function ReviewDetail({ params }: ReviewDetailProps) {
   const [inputStatus, setInputStatus] = useState<string>('0');
   const [inputReason, setInputReason] = useState<string>('');
   const [inputErrorMessage, setInputErrorMessage] = useState<string>('');
-  const [showStatusModal, setShowStatusModal] = useState(false);
+  const [showStatusModal, setShowStatusModal] = useState<boolean>(false);
   const router = useRouter();
 
   const queryClient = useQueryClient();

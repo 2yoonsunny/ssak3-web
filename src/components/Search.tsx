@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { usePathname, useSearchParams, useRouter } from 'next/navigation';
 import styles from './Search.module.scss';
 import Filter from './Filter';
@@ -27,19 +27,36 @@ export default function Search({ filterData }: SearchProps) {
       value,
       searchParams,
       pathname,
+      isResetPage: true,
     });
     router.push(newParams);
   };
+
+  useEffect(() => {
+    if (searchParams.get('keyword')) {
+      setValue(searchParams.get('keyword'));
+    }
+  }, []);
+  useEffect(() => {
+    if (!searchParams.get('keyword')) {
+      setValue('');
+    }
+  }, [searchParams]);
 
   return (
     <div className={styles.search}>
       {filterData && <Filter param='property' data={filterData} />}
       <input
         type='text'
+        value={value}
         placeholder='검색어를 입력해주세요'
         onChange={onChangeHandler}
       />
-      <button type='button' onClick={onClickHandler}>
+      <button
+        type='button'
+        onClick={onClickHandler}
+        disabled={searchParams.get('property') === null}
+      >
         검색
       </button>
     </div>
