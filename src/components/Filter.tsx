@@ -33,7 +33,7 @@ export default function Filter({ param, data, hasTotal = false }: FilterProps) {
     if (searchParams.get(param)) {
       setValue(searchParams.get(param));
     } else if (hasTotal) {
-      setValue('total');
+      setValue('');
     }
   }, []);
   useEffect(() => {
@@ -46,7 +46,7 @@ export default function Filter({ param, data, hasTotal = false }: FilterProps) {
     <div className={styles.filter}>
       <select value={value} onChange={onChangeHandler}>
         {hasTotal ? (
-          <option value='total'>전체</option>
+          <option value=''>전체</option>
         ) : (
           <option value='' disabled>
             구분
