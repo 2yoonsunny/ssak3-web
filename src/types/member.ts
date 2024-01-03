@@ -10,7 +10,7 @@ export type MemberType = {
   address?: string;
   monthlyCount?: number;
   totalCount?: number;
-  point?: number; // 수정 가능
+  point?: number;
   pointHistory?: PointType[];
   products?: ProductType[];
 };

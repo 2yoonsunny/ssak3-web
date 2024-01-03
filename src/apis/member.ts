@@ -3,10 +3,6 @@ import { AddPointRequestParams } from '@/types/common';
 import { MemberType } from '@/types/member';
 
 export async function fetchMemberDetail(memberId: string): Promise<MemberType> {
-  // const wait = (timeout: number) => {
-  //   return new Promise((resolve) => setTimeout(resolve, timeout));
-  // };
-  // await wait(2000);
   const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/user/${memberId}`;
   const { data } = await axios.get(url);
   return data;

@@ -17,8 +17,7 @@ type ProductResponseType = {
 
 const FILTER_DATA: OptionType[] = [
   { index: 0, name: '수거ID', value: 'productId' },
-  { index: 1, name: '회원 이름', value: 'username' },
-  { index: 2, name: '회원 이메일', value: 'email' },
+  { index: 1, name: '회원ID', value: 'memberId' },
 ];
 
 const fetchData = async (querystring: string): Promise<ProductResponseType> => {
@@ -50,6 +49,8 @@ export default async function Product({ searchParams }: { searchParams?: URLSear
             <tr>
               <th>수거ID</th>
               <th>회원ID</th>
+              <th>회원 이름</th>
+              <th>회원 이메일</th>
               <th>개수</th>
               <th>상태</th>
               <th>신청일시</th>
@@ -62,6 +63,8 @@ export default async function Product({ searchParams }: { searchParams?: URLSear
               <tr key={data.productId}>
                 <td>{data.productId}</td>
                 <td>M{data.memberId}</td>
+                <td>{data.user?.username}</td>
+                <td>{data.user?.email}</td>
                 <td>{data.count}</td>
                 <td>{PRODUCT_STATUS.find((d) => d.value === data.status)?.name}</td>
                 <td>{convertDate(data.requestTime)}</td>

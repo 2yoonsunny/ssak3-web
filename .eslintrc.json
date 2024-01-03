@@ -23,6 +23,7 @@
       }
     ],
     "import/prefer-default-export": ["off", { "target": "single" }],
+    "import/no-cycle": "off",
     "jsx-a11y/label-has-associated-control": [
       2,
       {
