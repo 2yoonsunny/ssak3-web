@@ -1,12 +1,19 @@
 import React from 'react';
 import Link from 'next/link';
-import cx from 'classnames';
 import commonStyles from '@/styles/Common.module.scss';
 import Sidebar from '@/components/Sidebar';
 import Filter from '@/components/Filter';
 import Search from '@/components/Search';
 import { PRODUCT_STATUS } from '@/constants/status';
-import { OptionType } from '@/types/common';
+import { OptionType, PageInfoType } from '@/types/common';
+import { ProductType } from '@/types/product';
+import { convertDate } from '@/utils/date';
+import Pagination from '@/components/Pagination';
+
+type ProductResponseType = {
+  pageInfo: PageInfoType;
+  result: ProductType[];
+};
 
 const FILTER_DATA: OptionType[] = [
   { index: 0, name: '수거ID', value: 'productId' },
@@ -14,7 +21,21 @@ const FILTER_DATA: OptionType[] = [
   { index: 2, name: '회원 이메일', value: 'email' },
 ];
 
-export default function Product() {
+const fetchData = async (querystring: string): Promise<ProductResponseType> => {
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/product/list?${querystring}`,
+    {
+      cache: 'no-cache',
+    },
+  );
+  const data = await response.json();
+  return data;
+};
+
+export default async function Product({ searchParams }: { searchParams?: URLSearchParams }) {
+  const querystring = new URLSearchParams(searchParams).toString();
+  const { result = [], pageInfo } = await fetchData(querystring);
+
   return (
     <div className={commonStyles.section}>
       <Sidebar />
@@ -28,8 +49,7 @@ export default function Product() {
           <thead>
             <tr>
               <th>수거ID</th>
-              <th>회원 이름</th>
-              <th>회원 이메일</th>
+              <th>회원ID</th>
               <th>개수</th>
               <th>상태</th>
               <th>신청일시</th>
@@ -38,24 +58,22 @@ export default function Product() {
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>P1</td>
-              <td>석슬일</td>
-              <td>one@naver.com</td>
-              <td>8</td>
-              <td>정산완료</td>
-              <td>2023.11.01 22:00:00</td>
-              <td>2023.11.11 12:00:00</td>
-              <td>
-                <Link href='product/1'>상세보기</Link>
-              </td>
-            </tr>
+            {result.map((data: ProductType) => (
+              <tr key={data.productId}>
+                <td>{data.productId}</td>
+                <td>M{data.memberId}</td>
+                <td>{data.count}</td>
+                <td>{PRODUCT_STATUS.find((d) => d.value === data.status)?.name}</td>
+                <td>{convertDate(data.requestTime)}</td>
+                <td>{convertDate(data.pickupTime)}</td>
+                <td>
+                  <Link href={`product/${data.productId}`}>상세보기</Link>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
-        <div className={commonStyles.pageIndicator}>
-          <div className={cx(commonStyles.prev, commonStyles.disabled)} />
-          <div className={commonStyles.next} />
-        </div>
+        <Pagination pageInfo={pageInfo} />
       </div>
     </div>
   );

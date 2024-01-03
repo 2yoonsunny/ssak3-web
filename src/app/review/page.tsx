@@ -34,7 +34,7 @@ const fetchData = async (querystring: string): Promise<ReviewResponseType> => {
 
 export default async function Review({ searchParams }: { searchParams?: URLSearchParams }) {
   const querystring = new URLSearchParams(searchParams).toString();
-  const { result, pageInfo } = await fetchData(querystring);
+  const { result = [], pageInfo } = await fetchData(querystring);
 
   return (
     <div className={commonStyles.section}>

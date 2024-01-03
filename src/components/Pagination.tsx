@@ -36,26 +36,21 @@ export default function Pagination({ pageInfo }: PaginationProps) {
     router.push(newParams);
   };
 
+  if (!pageInfo) return '';
   return (
     <div className={commonStyles.pageIndicator}>
       <button
         type='button'
         aria-label='prevList'
         disabled={!pageInfo.hasPrev}
-        className={cx(
-          commonStyles.prev,
-          !pageInfo.hasPrev && commonStyles.disabled,
-        )}
+        className={cx(commonStyles.prev, !pageInfo.hasPrev && commonStyles.disabled)}
         onClick={onClickPrevButton}
       />
       <button
         type='button'
         aria-label='nextList'
         disabled={!pageInfo.hasNext}
-        className={cx(
-          commonStyles.next,
-          !pageInfo.hasNext && commonStyles.disabled,
-        )}
+        className={cx(commonStyles.next, !pageInfo.hasNext && commonStyles.disabled)}
         onClick={onClickNextButton}
       />
     </div>
