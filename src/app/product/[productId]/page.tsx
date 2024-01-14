@@ -8,13 +8,13 @@ import dayjs from 'dayjs';
 import { useDaumPostcodePopup, Address } from 'react-daum-postcode';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { queryKeys } from '@/apis/queryKeys';
-import { fetchProductDetail, updateProduct, deleteItem } from '@/apis/product';
+import { fetchProductDetail, updateProduct, deleteItems } from '@/apis/product';
 import commonStyles from '@/styles/Common.module.scss';
 import Sidebar from '@/components/Sidebar';
 import Attachment from '@/components/Attachment';
 import { PRODUCT_STATUS, PRODUCT_ITEM_STATUS } from '@/constants/status';
 import { convertDate } from '@/utils/date';
-import { ItemType, UpdateProductRequestParams, DeleteItemRequestParams } from '@/types/product';
+import { ItemType, UpdateProductRequestParams, DeleteItemsRequestParams } from '@/types/product';
 
 type ProductDetailProps = {
   params: { productId: string };
@@ -34,6 +34,7 @@ export default function ProductDetail({ params }: ProductDetailProps) {
   const [status, setStatus] = useState<string>('');
   const [items, setItems] = useState<ItemType[]>([]);
   const [showItemId, setShowItemId] = useState<string>('1');
+  const [deleteItemIds, setDeleteItemIds] = useState<number[]>([]);
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
   const router = useRouter();
   const openDaumPostcodePopup = useDaumPostcodePopup();
@@ -47,8 +48,8 @@ export default function ProductDetail({ params }: ProductDetailProps) {
   const updateProductMutate = useMutation({
     mutationFn: (reqParams: UpdateProductRequestParams) => updateProduct(reqParams),
   });
-  const deleteItemMutate = useMutation({
-    mutationFn: (reqParams: DeleteItemRequestParams) => deleteItem(reqParams),
+  const deleteItemsMutate = useMutation({
+    mutationFn: (reqParams: DeleteItemsRequestParams) => deleteItems(reqParams),
   });
 
   const onChangeCount = (e: ChangeEvent<HTMLInputElement>) => {
@@ -138,9 +139,14 @@ export default function ProductDetail({ params }: ProductDetailProps) {
       setShowItemId(itemId);
     }
   };
-  const onClickModeButton = () => {
+  const onClickModeButton = async () => {
     if (!isDisabled) {
-      const reqParam = {
+      const deleteReqParam = {
+        productId: Number(params.productId),
+        itemIds: deleteItemIds,
+      };
+      await deleteItemsMutate.mutateAsync(deleteReqParam);
+      const updateReqParam = {
         productId: Number(params.productId),
         status,
         count,
@@ -150,9 +156,9 @@ export default function ProductDetail({ params }: ProductDetailProps) {
         addressDetail,
         accessMemo,
         pickupMemo,
-        items,
+        items: items.filter((data) => !deleteItemIds.includes(Number(data.itemId))),
       };
-      updateProductMutate.mutate(reqParam, {
+      await updateProductMutate.mutateAsync(updateReqParam, {
         onSuccess: () => {
           queryClient.invalidateQueries({
             queryKey: queryKeys.productDetail(params.productId),
@@ -162,18 +168,9 @@ export default function ProductDetail({ params }: ProductDetailProps) {
     }
     setIsDisabled(!isDisabled);
   };
+  const onClickAddItemButton = () => {};
   const onClickDeleteItemButton = (itemId: string) => {
-    const reqParam = {
-      productId: Number(params.productId),
-      itemId,
-    };
-    deleteItemMutate.mutate(reqParam, {
-      onSuccess: () => {
-        queryClient.invalidateQueries({
-          queryKey: queryKeys.productDetail(params.productId),
-        });
-      },
-    });
+    setDeleteItemIds([...deleteItemIds, Number(itemId)]);
   };
   const onClickListButton = () => {
     router.push('/product');
@@ -321,11 +318,19 @@ export default function ProductDetail({ params }: ProductDetailProps) {
         </div>
         <div className={commonStyles.card}>
           <h2 className={commonStyles.title}>물품</h2>
-          <button type='button' className={commonStyles.addBtn} disabled={isDisabled}>
+          <button
+            type='button'
+            className={commonStyles.addBtn}
+            disabled={isDisabled}
+            onClick={onClickAddItemButton}
+          >
             물품 추가
           </button>
           {items.map((data) => {
             const sellRule = data.sellRule.split('_');
+            if (deleteItemIds.includes(Number(data.itemId))) {
+              return null;
+            }
             return (
               <div key={data.itemId} className={commonStyles.card}>
                 <div className={commonStyles.item}>

@@ -48,7 +48,7 @@ export type UpdateProductRequestParams = {
   items: ItemType[];
 };
 
-export type DeleteItemRequestParams = {
+export type DeleteItemsRequestParams = {
   productId: number;
-  itemId: string;
+  itemIds: number[];
 };

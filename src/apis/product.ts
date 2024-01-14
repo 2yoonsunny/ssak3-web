@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { ProductType, UpdateProductRequestParams, DeleteItemRequestParams } from '@/types/product';
+import { ProductType, UpdateProductRequestParams, DeleteItemsRequestParams } from '@/types/product';
 
 export async function fetchProductDetail(productId: string): Promise<ProductType> {
   // const wait = (timeout: number) => {
@@ -38,7 +38,7 @@ export async function updateProduct({
   return data;
 }
 
-export async function deleteItem({ productId, itemId }: DeleteItemRequestParams): Promise<void> {
-  const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/product/deleteItem`;
-  await axios.delete(url, { data: { productId, itemId } });
+export async function deleteItems({ productId, itemIds }: DeleteItemsRequestParams): Promise<void> {
+  const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/product/deleteItems`;
+  await axios.delete(url, { data: { productId, itemIds } });
 }
