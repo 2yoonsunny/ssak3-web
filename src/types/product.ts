@@ -7,6 +7,7 @@ export type ProductType = {
   count: number;
   requestTime: string;
   pickupTime: string;
+  photo?: string;
   address: string;
   addressDetail: string;
   accessMemo: string;
@@ -32,4 +33,22 @@ export type ItemType = {
   sellStartTime: string;
   sellEndTime: string;
   itemStatus: string;
+};
+
+export type UpdateProductRequestParams = {
+  productId: number;
+  status: string;
+  count: number;
+  pickupTime: string;
+  photo?: string;
+  address: string;
+  addressDetail: string;
+  accessMemo?: string;
+  pickupMemo?: string;
+  items: ItemType[];
+};
+
+export type DeleteItemRequestParams = {
+  productId: number;
+  itemId: string;
 };

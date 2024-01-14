@@ -6,18 +6,22 @@ import Link from 'next/link';
 import cx from 'classnames';
 import dayjs from 'dayjs';
 import { useDaumPostcodePopup, Address } from 'react-daum-postcode';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { queryKeys } from '@/apis/queryKeys';
-import { fetchProductDetail } from '@/apis/product';
+import { fetchProductDetail, updateProduct, deleteItem } from '@/apis/product';
 import commonStyles from '@/styles/Common.module.scss';
 import Sidebar from '@/components/Sidebar';
 import Attachment from '@/components/Attachment';
 import { PRODUCT_STATUS, PRODUCT_ITEM_STATUS } from '@/constants/status';
-import { addCommas } from '@/utils/number';
 import { convertDate } from '@/utils/date';
+import { ItemType, UpdateProductRequestParams, DeleteItemRequestParams } from '@/types/product';
 
 type ProductDetailProps = {
   params: { productId: string };
+};
+type OnChangeItemsProps = {
+  key: string;
+  value: string | number;
 };
 
 export default function ProductDetail({ params }: ProductDetailProps) {
@@ -28,15 +32,23 @@ export default function ProductDetail({ params }: ProductDetailProps) {
   const [pickupMemo, setPickupMemo] = useState<string>('');
   const [pickupTime, setPickupTime] = useState<string>('');
   const [status, setStatus] = useState<string>('');
+  const [items, setItems] = useState<ItemType[]>([]);
   const [showItemId, setShowItemId] = useState<string>('1');
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
   const router = useRouter();
   const openDaumPostcodePopup = useDaumPostcodePopup();
 
+  const queryClient = useQueryClient();
   const productDetailQuery = useQuery({
     queryKey: queryKeys.productDetail(params.productId),
     queryFn: () => fetchProductDetail(params.productId),
     enabled: params.productId !== null,
+  });
+  const updateProductMutate = useMutation({
+    mutationFn: (reqParams: UpdateProductRequestParams) => updateProduct(reqParams),
+  });
+  const deleteItemMutate = useMutation({
+    mutationFn: (reqParams: DeleteItemRequestParams) => deleteItem(reqParams),
   });
 
   const onChangeCount = (e: ChangeEvent<HTMLInputElement>) => {
@@ -57,6 +69,68 @@ export default function ProductDetail({ params }: ProductDetailProps) {
   const onChangeStatus = (e: ChangeEvent<HTMLSelectElement>) => {
     setStatus(e.target.value);
   };
+  const onChangeItems = (changeItemIndex: string, { key, value }: OnChangeItemsProps) => {
+    const changeItem: Record<string, string | number> = {};
+    changeItem[key] = value;
+    const newItems = items.map((data) => {
+      if (data.itemId === changeItemIndex) {
+        return { ...data, ...changeItem };
+      }
+      return { ...data };
+    });
+    setItems(newItems);
+  };
+  const onChangeItemCategory = (e: ChangeEvent<HTMLInputElement>) => {
+    onChangeItems(e.target.dataset.id, { key: 'category', value: e.target.value });
+  };
+  const onChangeItemParts = (e: ChangeEvent<HTMLInputElement>) => {
+    onChangeItems(e.target.dataset.id, { key: 'parts', value: e.target.value });
+  };
+  const onChangeItemOpStatus = (e: ChangeEvent<HTMLInputElement>) => {
+    onChangeItems(e.target.dataset.id, { key: 'opStatus', value: e.target.value });
+  };
+  const onChangeItemComment = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    onChangeItems(e.target.dataset.id, { key: 'comment', value: e.target.value });
+  };
+  const onChangeItemGrade = (e: ChangeEvent<HTMLInputElement>) => {
+    onChangeItems(e.target.dataset.id, { key: 'grade', value: e.target.value });
+  };
+  const onChangeItemAvgPrice = (e: ChangeEvent<HTMLInputElement>) => {
+    onChangeItems(e.target.dataset.id, { key: 'avgPrice', value: Number(e.target.value) || 0 });
+  };
+  const onChangeItemSellPrice = (e: ChangeEvent<HTMLInputElement>) => {
+    onChangeItems(e.target.dataset.id, { key: 'sellPrice', value: Number(e.target.value) || 0 });
+  };
+  const onChangeItemDirectSellPrice = (e: ChangeEvent<HTMLInputElement>) => {
+    onChangeItems(e.target.dataset.id, {
+      key: 'directSellPrice',
+      value: Number(e.target.value) || 0,
+    });
+  };
+  const onChangeProcessing = (e: ChangeEvent<HTMLInputElement>) => {
+    const sellRuleArray = items
+      .find((data) => data.itemId === e.target.dataset.id)
+      .sellRule.split('_');
+    const value = Number(e.target.value);
+    if (String(sellRuleArray[value]) === '0') {
+      sellRuleArray[value] = '1';
+    } else {
+      sellRuleArray[value] = '0';
+    }
+    onChangeItems(e.target.dataset.id, { key: 'sellRule', value: sellRuleArray.join('_') });
+  };
+  const onChangeEntry = (e: ChangeEvent<HTMLInputElement>) => {
+    onChangeItems(e.target.dataset.id, { key: 'pickupStatus', value: String(e.target.value) });
+  };
+  const onChangeSellStartTime = (e: ChangeEvent<HTMLInputElement>) => {
+    onChangeItems(e.target.dataset.id, { key: 'sellStartTime', value: e.target.value });
+  };
+  const onChangeSellEndTime = (e: ChangeEvent<HTMLInputElement>) => {
+    onChangeItems(e.target.dataset.id, { key: 'sellEndTime', value: e.target.value });
+  };
+  const onChangeItemStatus = (e: ChangeEvent<HTMLSelectElement>) => {
+    onChangeItems(e.target.dataset.id, { key: 'itemStatus', value: e.target.value });
+  };
   const onClickShowItemButton = (itemId: string) => {
     if (showItemId === itemId) {
       setShowItemId('0');
@@ -65,7 +139,41 @@ export default function ProductDetail({ params }: ProductDetailProps) {
     }
   };
   const onClickModeButton = () => {
+    if (!isDisabled) {
+      const reqParam = {
+        productId: Number(params.productId),
+        status,
+        count,
+        pickupTime,
+        photo: '0',
+        address,
+        addressDetail,
+        accessMemo,
+        pickupMemo,
+        items,
+      };
+      updateProductMutate.mutate(reqParam, {
+        onSuccess: () => {
+          queryClient.invalidateQueries({
+            queryKey: queryKeys.productDetail(params.productId),
+          });
+        },
+      });
+    }
     setIsDisabled(!isDisabled);
+  };
+  const onClickDeleteItemButton = (itemId: string) => {
+    const reqParam = {
+      productId: Number(params.productId),
+      itemId,
+    };
+    deleteItemMutate.mutate(reqParam, {
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.productDetail(params.productId),
+        });
+      },
+    });
   };
   const onClickListButton = () => {
     router.push('/product');
@@ -100,6 +208,7 @@ export default function ProductDetail({ params }: ProductDetailProps) {
       setPickupMemo(productDetailQuery.data.pickupMemo);
       setPickupTime(dayjs(productDetailQuery.data.pickupTime).format('YYYY-MM-DDTHH:mm:ss'));
       setStatus(productDetailQuery.data.status);
+      setItems(productDetailQuery.data.items);
     }
   }, [productDetailQuery.data]);
 
@@ -215,7 +324,7 @@ export default function ProductDetail({ params }: ProductDetailProps) {
           <button type='button' className={commonStyles.addBtn} disabled={isDisabled}>
             물품 추가
           </button>
-          {productDetailQuery.data?.items?.map((data) => {
+          {items.map((data) => {
             const sellRule = data.sellRule.split('_');
             return (
               <div key={data.itemId} className={commonStyles.card}>
@@ -239,48 +348,84 @@ export default function ProductDetail({ params }: ProductDetailProps) {
                       <ul>
                         <li>
                           <p>카테고리</p>
-                          <input type='text' value={data.category} disabled={isDisabled} />
+                          <input
+                            type='text'
+                            value={data.category}
+                            data-id={data.itemId}
+                            disabled={isDisabled}
+                            onChange={onChangeItemCategory}
+                          />
                         </li>
                         <li>
                           <p>구성품</p>
-                          <input type='text' value={data.parts} disabled={isDisabled} />
+                          <input
+                            type='text'
+                            value={data.parts}
+                            data-id={data.itemId}
+                            disabled={isDisabled}
+                            onChange={onChangeItemParts}
+                          />
                         </li>
                         <li>
                           <p>기능작동</p>
-                          <input type='text' value={data.opStatus} disabled={isDisabled} />
+                          <input
+                            type='text'
+                            value={data.opStatus}
+                            data-id={data.itemId}
+                            disabled={isDisabled}
+                            onChange={onChangeItemOpStatus}
+                          />
                         </li>
                         <li>
                           <p>코멘트</p>
-                          <textarea rows={5} value={data.comment} disabled={isDisabled} />
+                          <textarea
+                            rows={5}
+                            value={data.comment}
+                            data-id={data.itemId}
+                            disabled={isDisabled}
+                            onChange={onChangeItemComment}
+                          />
                         </li>
                       </ul>
                       <ul>
                         <li>
                           <p>등급</p>
-                          <input type='text' value={data.grade} disabled={isDisabled} />
+                          <input
+                            type='text'
+                            value={data.grade}
+                            data-id={data.itemId}
+                            disabled={isDisabled}
+                            onChange={onChangeItemGrade}
+                          />
                         </li>
                         <li>
                           <p>평균시세</p>
                           <input
                             type='text'
-                            value={addCommas(data.avgPrice)}
+                            value={data.avgPrice}
+                            data-id={data.itemId}
                             disabled={isDisabled}
+                            onChange={onChangeItemAvgPrice}
                           />
                         </li>
                         <li>
                           <p>가격(일반판매)</p>
                           <input
                             type='text'
-                            value={addCommas(data.sellPrice)}
+                            value={data.sellPrice}
+                            data-id={data.itemId}
                             disabled={isDisabled}
+                            onChange={onChangeItemSellPrice}
                           />
                         </li>
                         <li>
                           <p>가격(바로판매)</p>
                           <input
                             type='text'
-                            value={addCommas(data.directSellPrice)}
+                            value={data.directSellPrice}
+                            data-id={data.itemId}
                             disabled={isDisabled}
+                            onChange={onChangeItemDirectSellPrice}
                           />
                         </li>
                       </ul>
@@ -313,27 +458,33 @@ export default function ProductDetail({ params }: ProductDetailProps) {
                         type='checkbox'
                         id='processing-public'
                         name='processing'
-                        value='public'
+                        value='0'
                         checked={sellRule[0] === '1'}
+                        data-id={data.itemId}
                         disabled={isDisabled}
+                        onChange={onChangeProcessing}
                       />
                       <label htmlFor='processing-public'>일반판매</label>
                       <input
                         type='checkbox'
                         id='processing-quick'
                         name='processing'
-                        value='quick'
+                        value='1'
                         checked={sellRule[1] === '1'}
+                        data-id={data.itemId}
                         disabled={isDisabled}
+                        onChange={onChangeProcessing}
                       />
                       <label htmlFor='processing-quick'>바로판매</label>
                       <input
                         type='checkbox'
                         id='processing-disuse'
                         name='processing'
-                        value='disuse'
+                        value='2'
                         checked={sellRule[2] === '1'}
+                        data-id={data.itemId}
                         disabled={isDisabled}
+                        onChange={onChangeProcessing}
                       />
                       <label htmlFor='processing-disuse'>폐기</label>
                     </div>
@@ -343,18 +494,22 @@ export default function ProductDetail({ params }: ProductDetailProps) {
                         type='radio'
                         id='recovery-no'
                         name='recovery'
-                        value='no'
+                        value='0'
                         checked={data.pickupStatus === '0'}
+                        data-id={data.itemId}
                         disabled={isDisabled}
+                        onChange={onChangeEntry}
                       />
                       <label htmlFor='recovery-no'>미신청</label>
                       <input
                         type='radio'
                         id='recovery-yes'
                         name='recovery'
-                        value='yes'
+                        value='1'
                         checked={data.pickupStatus === '1'}
+                        data-id={data.itemId}
                         disabled={isDisabled}
+                        onChange={onChangeEntry}
                       />
                       <label htmlFor='recovery-yes'>신청</label>
                     </div>
@@ -365,21 +520,30 @@ export default function ProductDetail({ params }: ProductDetailProps) {
                       <input
                         type='date'
                         value={dayjs(data.sellStartTime).format('YYYY-MM-DD')}
+                        data-id={data.itemId}
                         disabled={isDisabled}
                         min={dayjs(pickupTime).format('YYYY-MM-DD')}
+                        onChange={onChangeSellStartTime}
                       />
                       <p>-</p>
                       <input
                         type='date'
                         value={dayjs(data.sellEndTime).format('YYYY-MM-DD')}
+                        data-id={data.itemId}
                         disabled={isDisabled}
                         min={dayjs(data.sellStartTime).format('YYYY-MM-DD')}
+                        onChange={onChangeSellEndTime}
                       />
                     </div>
                     <div className={commonStyles.divider} />
 
                     <h2 className={commonStyles.title}>상태</h2>
-                    <select value={data.itemStatus} disabled={isDisabled}>
+                    <select
+                      value={data.itemStatus}
+                      data-id={data.itemId}
+                      disabled={isDisabled}
+                      onChange={onChangeItemStatus}
+                    >
                       {PRODUCT_ITEM_STATUS.map((d) => (
                         <option key={d.value} value={d.value}>
                           {d.name}
@@ -387,7 +551,11 @@ export default function ProductDetail({ params }: ProductDetailProps) {
                       ))}
                     </select>
                     <div className={commonStyles.deleteBtn}>
-                      <button type='button' disabled={isDisabled}>
+                      <button
+                        type='button'
+                        disabled={isDisabled}
+                        onClick={() => onClickDeleteItemButton(data.itemId)}
+                      >
                         삭제
                       </button>
                     </div>
