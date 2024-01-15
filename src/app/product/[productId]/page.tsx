@@ -141,9 +141,10 @@ export default function ProductDetail({ params }: ProductDetailProps) {
   };
   const onClickModeButton = async () => {
     if (!isDisabled) {
+      const originItemIds = productDetailQuery.data.items.map((data) => data.itemId);
       const deleteReqParam = {
         productId: Number(params.productId),
-        itemIds: deleteItemIds,
+        itemIds: deleteItemIds.filter((data) => originItemIds.includes(String(data))),
       };
       await deleteItemsMutate.mutateAsync(deleteReqParam);
       const updateReqParam = {
@@ -168,7 +169,27 @@ export default function ProductDetail({ params }: ProductDetailProps) {
     }
     setIsDisabled(!isDisabled);
   };
-  const onClickAddItemButton = () => {};
+  const onClickAddItemButton = () => {
+    const addItem = {
+      productId: Number(params.productId),
+      itemId: String(Number(items[items.length - 1].itemId) + 1),
+      category: '',
+      parts: '',
+      opStatus: '',
+      comment: '',
+      grade: '',
+      avgPrice: 0,
+      sellPrice: 0,
+      directSellPrice: 0,
+      photo: 0,
+      sellRule: '0_0_0',
+      pickupStatus: '0',
+      sellStartTime: dayjs().format('YYYY-MM-DD'),
+      sellEndTime: dayjs().add(1, 'day').format('YYYY-MM-DD'),
+      itemStatus: '0',
+    };
+    setItems([...items, addItem]);
+  };
   const onClickDeleteItemButton = (itemId: string) => {
     setDeleteItemIds([...deleteItemIds, Number(itemId)]);
   };
